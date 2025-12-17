@@ -122,9 +122,6 @@ class Product extends Model
         return round((($this->price - $this->discount_price) / $this->price) * 100);
     }
 
-    /**
-     * Cek apakah produk memiliki diskon.
-     */
     public function getHasDiscountAttribute(): bool
     {
         return $this->discount_price !== null
@@ -142,43 +139,26 @@ class Product extends Model
         return asset('images/no-image.png');
     }
 
-    /**
-     * Cek apakah produk tersedia (aktif dan ada stok).
-     */
     public function getIsAvailableAttribute(): bool
     {
         return $this->is_active && $this->stock > 0;
     }
 
-    // ==================== SCOPES ====================
-
-    /**
-     * Filter produk aktif.
-     */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
 
-    /**
-     * Filter produk unggulan.
-     */
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
     }
 
-    /**
-     * Filter produk yang tersedia (ada stok).
-     */
     public function scopeInStock($query)
     {
         return $query->where('stock', '>', 0);
     }
 
-    /**
-     * Filter berdasarkan kategori (menggunakan slug).
-     */
     public function scopeByCategory($query, string $categorySlug)
     {
         return $query->whereHas('category', function($q) use ($categorySlug) {
@@ -186,20 +166,14 @@ class Product extends Model
         });
     }
 
-    /**
-     * Pencarian produk.
-     */
     public function scopeSearch($query, string $keyword)
     {
         return $query->where(function ($q) use ($keyword) {
             $q->where('name', 'like', "%{$keyword}%")
-              ->orWhere('description', 'like', "%{$keyword}%");
+              ->orWhere('desc-ription', 'like', "%{$keyword}%");
         });
     }
 
-    /**
-     * Filter berdasarkan range harga.
-     */
     public function scopePriceRange($query, float $min, float $max)
     {
         return $query->whereBetween('price', [$min, $max]);
