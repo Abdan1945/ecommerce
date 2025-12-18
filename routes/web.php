@@ -27,3 +27,9 @@ Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.update');
 
 
+use App\Http\Controllers\Auth\GoogleController;
+
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+
+
