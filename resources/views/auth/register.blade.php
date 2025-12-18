@@ -61,6 +61,14 @@
                             </div>
                         </div>
 
+
+                        <div class="row mb-0">
+                            <div class="col-md-6 offset-md-4">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ __('Register') }}
+                                </button>
+                            </div>
+
                         <div class="position-relative my-4">
                 <hr />
                        <span
