@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Auth;
 
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
+// Opsional: biar /home juga bisa diakses langsung
+Route::get('/home', [HomeController::class, 'index']);
 
 // Katalog Produk
 Route::get('/products', [CatalogController::class, 'index'])->name('catalog.index');
