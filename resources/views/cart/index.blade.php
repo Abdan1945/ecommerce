@@ -1,9 +1,4 @@
-{{-- ================================================
-     FILE: resources/views/cart/index.blade.php
-     FUNGSI: Halaman keranjang belanja
-     ================================================ --}}
-
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Keranjang Belanja')
 
@@ -13,7 +8,7 @@
         <i class="bi bi-cart3 me-2"></i>Keranjang Belanja
     </h2>
 
-    @if($cart && $cart->items->count())
+    @if($cart?->items?->count())
         <div class="row">
             {{-- Cart Items --}}
             <div class="col-lg-8 mb-4">
@@ -30,7 +25,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($cart->items as $item)
+                                @forelse($cart->items as $item)
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -41,7 +36,7 @@
                                                 <div>
                                                     <a href="{{ route('catalog.show', $item->product->slug) }}"
                                                        class="text-decoration-none text-dark fw-medium">
-                                                        {{ Str::limit($item->product->name, 40) }}
+                                                        {{ \Illuminate\Support\Str::limit($item->product->name, 40) }}
                                                     </a>
                                                     <div class="small text-muted">
                                                         {{ $item->product->category->name }}
@@ -53,13 +48,14 @@
                                             {{ $item->product->formatted_price }}
                                         </td>
                                         <td class="text-center align-middle">
-                                            <form action="{{ route('cart.update', $item->id) }}" method="POST"
-                                                  class="d-inline-flex align-items-center">
+                                            <form action="{{ route('cart.update', $item->id) }}" method="POST">
                                                 @csrf
                                                 @method('PATCH')
-                                                <input type="number" name="quantity"
+                                                <input type="number"
+                                                       name="quantity"
                                                        value="{{ $item->quantity }}"
-                                                       min="1" max="{{ $item->product->stock }}"
+                                                       min="1"
+                                                       max="{{ $item->product->stock }}"
                                                        class="form-control form-control-sm text-center"
                                                        style="width: 70px;"
                                                        onchange="this.form.submit()">
@@ -72,14 +68,21 @@
                                             <form action="{{ route('cart.remove', $item->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
                                                         onclick="return confirm('Hapus item ini?')">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            Keranjang kosong
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
