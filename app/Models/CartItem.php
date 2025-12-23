@@ -1,9 +1,7 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CartItem extends Model
 {
@@ -11,29 +9,67 @@ class CartItem extends Model
         'cart_id',
         'product_id',
         'quantity',
-    ];
 
-    /**
-     * Relasi: Item ini bagian dari keranjang mana.
-     */
-    public function cart(): BelongsTo
+    ];
+    protected $casts = [
+        'quantity' => 'integer',
+    ];
+    // ==================== RELATIONSHIPS ====================
+    public function cart()
     {
         return $this->belongsTo(Cart::class);
     }
-
-    /**
-     * Relasi: Item ini merujuk ke produk yang mana.
-     */
-    public function product(): BelongsTo
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    /**
-     * Helper: Menghitung subtotal untuk item ini saja.
-     */
-    public function getSubtotalAttribute(): float
+    // ==================== ACCESSORS ====================
+    public function getTotalPriceAttribute()
     {
-        return $this->quantity * $this->product->price;
+        return $this->product->discount_price * $this->quantity;
     }
+    public function getTotalWeightAttribute()
+    {
+        return $this->product->weight * $this->quantity;
+    }
+    // ==================== BOOT ====================
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($cartItem) {
+            // Pastikan relasi product ter-load
+            if (! $cartItem->relationLoaded('product')) {
+                $cartItem->load('product');
+            }
+            if (! $cartItem->product) {
+                throw new \Exception('Produk tidak ditemukan.');
+            }
+            // Cek stok produk sebelum menambahkan ke item keranjang
+            if ($cartItem->quantity > $cartItem->product->stock) {
+                throw new \Exception('Stok produk tidak mencukupi.');
+            }
+        });
+        static::updating(function ($cartItem) {
+            if (! $cartItem->relationLoaded('product')) {
+                $cartItem->load('product');
+            }
+            if (! $cartItem->product) {
+                throw new \Exception('Produk tidak ditemukan.');
+            }
+            // Cek stok produk sebelum memperbarui item keranjang
+            if ($cartItem->quantity > $cartItem->product->stock) {
+                throw new \Exception('Stok produk tidak mencukupi.');
+            }
+        });
+    }
+
+    /**
+     * Agar $item->subtotal di view tidak 0, fallback ke total_price
+     */
+    public function getSubtotalAttribute()
+    {
+        return $this->total_price;
+    }
+
 }

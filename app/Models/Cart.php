@@ -2,8 +2,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cart extends Model
 {
@@ -12,38 +10,36 @@ class Cart extends Model
         'session_id',
     ];
 
-    /**
-     * Relasi: Satu keranjang dimiliki oleh satu user (jika login).
-     */
-    public function user(): BelongsTo
+    protected $with = ['items.product'];
+
+    // ==================== RELATIONSHIPS ====================
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relasi: Satu keranjang memiliki banyak item produk.
-     */
-    public function items(): HasMany
+    public function items()
     {
         return $this->hasMany(CartItem::class);
     }
 
     /**
-     * Helper: Menghitung total kuantitas semua item di keranjang.
-     * Dipanggil di Navbar dengan $cart->total_items
+     * Hitung subtotal semua item di keranjang
      */
-    public function getTotalItemsAttribute(): int
+    public function getSubtotalAttribute()
     {
-        return $this->items()->sum('quantity');
+        return $this->items->sum(function ($item) {
+            return $item->total_price;
+        });
     }
 
     /**
-     * Helper: Menghitung total harga seluruh isi keranjang.
+     * Hitung total berat semua item di keranjang
      */
-    public function getTotalPriceAttribute(): float
+    public function getTotalWeightAttribute()
     {
         return $this->items->sum(function ($item) {
-            return $item->quantity * $item->product->price;
+            return $item->total_weight;
         });
     }
 }
