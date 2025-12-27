@@ -37,7 +37,7 @@ return new class extends Migration
 
             $table->index(['category_id', 'is_active']);
 
-            
+
             $table->index('is_featured');
         });
     }

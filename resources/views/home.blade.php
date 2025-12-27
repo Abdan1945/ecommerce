@@ -23,7 +23,7 @@
                     <a href="{{ route('catalog.index') }}" class="btn btn-light btn-lg">
                         <i class="bi bi-bag me-2"></i>Mulai Belanja
                     </a>
-                    
+
                 </div>
                  <div class="col-lg-6 text-center" data-aos="fade-left">
                     <img src="images/joko.jpeg"
