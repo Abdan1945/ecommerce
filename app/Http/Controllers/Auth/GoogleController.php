@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 use GuzzleHttp\Exception\ClientException;
@@ -19,7 +21,7 @@ class GoogleController extends Controller
     public function redirect(): RedirectResponse
     {
         return Socialite::driver('google')
-            ->scopes(['email', 'profile']) // atau ['openid', 'profile', 'email']
+            ->scopes(['openid', 'profile', 'email'])
             ->redirect();
     }
 
@@ -48,7 +50,7 @@ class GoogleController extends Controller
 
             $user = $this->findOrCreateUser($googleUser);
 
-            Auth::login($user, true); // remember: true
+            Auth::login($user, true); // remember me
 
             session()->regenerate();
 
@@ -78,14 +80,11 @@ class GoogleController extends Controller
     }
 
     /**
-     * Cari user berdasarkan google_id atau email, jika tidak ada maka buat baru.
-     *
-     * @param  \Laravel\Socialite\Contracts\User  $googleUser
-     * @return \App\Models\User
+     * Cari atau buat user baru berdasarkan data dari Google.
      */
     protected function findOrCreateUser($googleUser): User
     {
-        // Cari berdasarkan google_id dulu (paling akurat)
+        // Cari berdasarkan google_id (paling akurat)
         $user = User::where('google_id', $googleUser->getId())->first();
 
         if ($user) {
@@ -97,7 +96,7 @@ class GoogleController extends Controller
             return $user;
         }
 
-        // Jika tidak ada google_id, coba cari berdasarkan email
+        // Cari berdasarkan email
         $user = User::where('email', $googleUser->getEmail())->first();
 
         if ($user) {
@@ -113,12 +112,12 @@ class GoogleController extends Controller
 
         // Buat user baru
         return User::create([
-            'name' => $googleUser->getName(),
+            'name' => $googleUser->getName() ?? explode('@', $googleUser->getEmail())[0],
             'email' => $googleUser->getEmail(),
             'google_id' => $googleUser->getId(),
             'avatar' => $googleUser->getAvatar(),
             'email_verified_at' => now(),
-            'password' => bcrypt(Str::random(24)), // atau Hash::make(...)
+            'password' => Hash::make(Str::random(24)), // password acak & aman
             'role' => 'customer',
         ]);
     }
