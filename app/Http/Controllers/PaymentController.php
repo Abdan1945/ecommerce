@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Services\MidtransService;
-use App\
+use App\Models\Payment;
 
 class PaymentController extends Controller
 {
