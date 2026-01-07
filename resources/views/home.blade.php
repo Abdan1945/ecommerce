@@ -110,7 +110,7 @@
                     <h3 class="fw-bold">🎁 Member Baru</h3>
                     <p>Dapatkan voucher Rp 50.000</p>
                     <a href="{{ route('register') }}" class="btn btn-light">
-                        Daftar Sekarang
+                        Daftar Sekarang   
                     </a>
                 </div>
             </div>

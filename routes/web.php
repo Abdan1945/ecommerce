@@ -3,7 +3,7 @@
 // FILE: routes/web.php
 // FUNGSI: Definisi semua route website
 // ================================================
-
+use App\Services\MidtransService;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MidtransNotificationController;
+use App\Http\Controllers\PaymentController;
 // ================================================
 // HALAMAN PUBLIK (Tanpa Login)
 // ================================================
@@ -61,7 +62,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.avatar.destroy');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
-
 });
 
 // ================================================
@@ -99,7 +99,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 // ================================================
 Auth::routes();
 
-use App\Services\MidtransService;
 
 // ================================================
 // GOOGLE OAUTH ROUTES
@@ -131,3 +130,13 @@ Route::controller(GoogleController::class)->group(function () {
 
 Route::post('midtrans/notification', [MidtransNotificationController::class, 'handle'])
     ->name('midtrans.notification');
+
+// Example of how it should look
+Route::patch('/profile/avatar', [ProfileController::class, 'updateAvatar'])
+    ->name('profile.avatar.update');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');

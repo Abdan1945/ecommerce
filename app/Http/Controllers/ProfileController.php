@@ -1,7 +1,5 @@
 <?php
 
-// app/Http/Controllers/ProfileController.php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
@@ -25,53 +23,69 @@ class ProfileController extends Controller
     }
 
     /**
-     * Mengupdate informasi profil user.
+     * Update informasi profil (nama, email, phone, address, avatar).
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
 
-        // Handle upload avatar jika ada file baru
+        // Ambil data yang sudah divalidasi, kecuali avatar (karena butuh proses upload)
+        $validated = $request->validated();
+
+        // Handle upload avatar jika ada
         if ($request->hasFile('avatar')) {
-            $avatarPath = $this->uploadAvatar($request, $user);
-            $user->avatar = $avatarPath;
+            // Hapus avatar lama jika ada
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            // Simpan avatar baru
+            $filename = 'avatar-' . $user->id . '-' . time() . '.' . $request->file('avatar')->extension();
+            $validated['avatar'] = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+        } else {
+            // Jika tidak ada file baru, jangan ubah avatar (hilangkan dari validated)
+            unset($validated['avatar']);
         }
 
-        // Update data lain dari validated request
-        $user->fill($request->validated());
-
-        // Reset verifikasi email jika email berubah
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+        // Reset email_verified_at jika email berubah
+        if ($user->email !== $validated['email']) {
+            $validated['email_verified_at'] = null;
         }
 
-        $user->save();
+        // Update user
+        $user->update($validated);
 
         return Redirect::route('profile.edit')
             ->with('success', 'Profil berhasil diperbarui!');
     }
 
     /**
-     * Helper untuk upload avatar baru dan hapus yang lama.
+     * Update avatar saja (misalnya via tombol "Ganti Foto" terpisah atau AJAX).
      */
-    protected function uploadAvatar(ProfileUpdateRequest $request, $user): string
+    public function updateAvatar(Request $request): RedirectResponse
     {
-        // Hapus avatar lama jika ada
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
+        ]);
+
+        $user = $request->user();
+
+        // Hapus avatar lama
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
         }
 
-        // Buat nama file unik
+        // Simpan avatar baru
         $filename = 'avatar-' . $user->id . '-' . time() . '.' . $request->file('avatar')->extension();
-
-        // Simpan ke storage/app/public/avatars → accessible via /storage/avatars/...
         $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
 
-        return $path;
+        $user->update(['avatar' => $path]);
+
+        return back()->with('success', 'Foto profil berhasil diperbarui.');
     }
 
     /**
-     * Hapus foto profil (misal dari tombol "Hapus Foto").
+     * Hapus foto profil.
      */
     public function deleteAvatar(Request $request): RedirectResponse
     {
@@ -79,15 +93,31 @@ class ProfileController extends Controller
 
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
-            $user->avatar = null;
-            $user->save(); // Lebih baik pakai save() daripada update() untuk consistency
+            $user->update(['avatar' => null]);
         }
 
         return back()->with('success', 'Foto profil berhasil dihapus.');
     }
 
     /**
-     * Hapus akun user permanen.
+     * Update password.
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        $request->user()->update([
+            'password' => bcrypt($validated['password']),
+        ]);
+
+        return back()->with('status', 'password-updated');
+    }
+
+    /**
+     * Hapus akun permanen.
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -99,7 +129,7 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        // Hapus avatar fisik
+        // Hapus avatar jika ada
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
         }
