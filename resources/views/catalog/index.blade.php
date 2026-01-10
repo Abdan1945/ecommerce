@@ -1,97 +1,128 @@
-{{-- ================================================
-     FILE: resources/views/catalog/index.blade.php
-     FUNGSI: Halaman katalog/daftar produk
-     ================================================ --}}
-
 @extends('layouts.app')
 
 @section('title', 'Katalog Produk')
 
 @section('content')
-<div class="container py-4">
+<style>
+    :root {
+        --primary-color: #0d6efd;
+        --soft-bg: #f8f9fa;
+    }
+    body { background-color: #f4f7f6; }
+
+    /* Sidebar Styling */
+    .filter-card {
+        border: none;
+        border-radius: 15px;
+        position: sticky;
+        top: 2rem;
+    }
+    .filter-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #adb5bd;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Category Radio Customization */
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    .category-label {
+        cursor: pointer;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .category-label:hover { color: var(--primary-color); }
+
+    /* Product Grid Header */
+    .catalog-header {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        border: none;
+    }
+
+    /* Custom Scrollbar for Filter */
+    .filter-form-container {
+        max-height: 80vh;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+    .filter-form-container::-webkit-scrollbar { width: 4px; }
+    .filter-form-container::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
+</style>
+
+<div class="container py-5">
     <div class="row">
         {{-- SIDEBAR FILTER --}}
         <div class="col-lg-3 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-funnel me-2"></i>Filter
-                    </h5>
-                </div>
-                <div class="card-body">
+            <div class="card filter-card shadow-sm">
+                <div class="card-body p-4">
                     <form action="{{ route('catalog.index') }}" method="GET" id="filter-form">
-                        {{-- Pertahankan search query --}}
-                        @if(request('q'))
-                            <input type="hidden" name="q" value="{{ request('q') }}">
-                        @endif
+                        <div class="filter-form-container">
+                            <h5 class="fw-bold mb-4 d-flex align-items-center">
+                                <i class="bi bi-sliders2 me-2"></i> Filter
+                            </h5>
 
-                        {{-- Filter Kategori --}}
-                        <div class="mb-4">
-                            <h6 class="fw-bold mb-3">Kategori</h6>
-                            @foreach($categories as $category)
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="category"
-                                           id="cat-{{ $category->slug }}"
-                                           value="{{ $category->slug }}"
-                                           {{ request('category') == $category->slug ? 'checked' : '' }}
-                                           onchange="this.form.submit()">
-                                    <label class="form-check-label d-flex justify-content-between"
-                                           for="cat-{{ $category->slug }}">
-                                        {{ $category->name }}
-                                        <span class="badge bg-secondary">{{ $category->products_count }}</span>
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
+                            @if(request('q'))
+                                <input type="hidden" name="q" value="{{ request('q') }}">
+                            @endif
 
-                        {{-- Filter Harga --}}
-                        <div class="mb-4">
-                            <h6 class="fw-bold mb-3">Rentang Harga</h6>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <input type="number"
-                                           class="form-control form-control-sm"
-                                           name="min_price"
-                                           placeholder="Min"
-                                           value="{{ request('min_price') }}">
+                            {{-- Filter Kategori --}}
+                            <div class="mb-4">
+                                <p class="filter-title">Kategori</p>
+                                @foreach($categories as $category)
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="category"
+                                               id="cat-{{ $category->slug }}" value="{{ $category->slug }}"
+                                               {{ request('category') == $category->slug ? 'checked' : '' }}
+                                               onchange="this.form.submit()">
+                                        <label class="form-check-label d-flex justify-content-between w-100 category-label" for="cat-{{ $category->slug }}">
+                                            <span>{{ $category->name }}</span>
+                                            <span class="text-muted small">({{ $category->products_count }})</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <hr class="my-4 opacity-50">
+
+                            {{-- Filter Harga --}}
+                            <div class="mb-4">
+                                <p class="filter-title">Rentang Harga</p>
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text bg-white">Rp</span>
+                                    <input type="number" name="min_price" class="form-control" placeholder="Min" value="{{ request('min_price') }}">
                                 </div>
-                                <div class="col-6">
-                                    <input type="number"
-                                           class="form-control form-control-sm"
-                                           name="max_price"
-                                           placeholder="Max"
-                                           value="{{ request('max_price') }}">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text bg-white">Rp</span>
+                                    <input type="number" name="max_price" class="form-control" placeholder="Max" value="{{ request('max_price') }}">
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill">
+                                    Terapkan Harga
+                                </button>
+                            </div>
+
+                            {{-- Sedang Diskon --}}
+                            <div class="mb-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="on_sale" id="on_sale" value="1"
+                                           {{ request('on_sale') ? 'checked' : '' }} onchange="this.form.submit()">
+                                    <label class="form-check-label fw-medium" for="on_sale">Diskon Spesial</label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-sm btn-outline-primary w-100 mt-2">
-                                Terapkan
-                            </button>
-                        </div>
 
-                        {{-- Filter Lainnya --}}
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="on_sale"
-                                       id="on_sale"
-                                       value="1"
-                                       {{ request('on_sale') ? 'checked' : '' }}
-                                       onchange="this.form.submit()">
-                                <label class="form-check-label" for="on_sale">
-                                    <i class="bi bi-tag text-danger"></i> Sedang Diskon
-                                </label>
-                            </div>
+                            @if(request()->hasAny(['category', 'min_price', 'max_price', 'on_sale']))
+                                <a href="{{ route('catalog.index') }}" class="btn btn-link btn-sm text-decoration-none text-danger p-0 mt-2">
+                                    <i class="bi bi-x-circle me-1"></i> Bersihkan Semua Filter
+                                </a>
+                            @endif
                         </div>
-
-                        {{-- Reset Filter --}}
-                        @if(request()->hasAny(['category', 'min_price', 'max_price', 'on_sale']))
-                            <a href="{{ route('catalog.index') }}" class="btn btn-sm btn-outline-secondary w-100">
-                                <i class="bi bi-x-circle me-1"></i> Reset Filter
-                            </a>
-                        @endif
                     </form>
                 </div>
             </div>
@@ -100,39 +131,28 @@
         {{-- MAIN CONTENT --}}
         <div class="col-lg-9">
             {{-- Header & Sorting --}}
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h4 class="mb-0">
+            <div class="catalog-header shadow-sm d-md-flex justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <h4 class="fw-bold mb-1">
                         @if(request('q'))
-                            Hasil pencarian: "{{ request('q') }}"
+                            Pencarian: "{{ request('q') }}"
                         @elseif(request('category'))
-                            {{ $categories->firstWhere('slug', request('category'))?->name ?? 'Produk' }}
+                            {{ $categories->firstWhere('slug', request('category'))?->name }}
                         @else
-                            Semua Produk
+                            Jelajahi Produk
                         @endif
                     </h4>
-                    <small class="text-muted">{{ $products->total() }} produk ditemukan</small>
+                    <p class="text-muted small mb-0">Menampilkan {{ $products->count() }} dari {{ $products->total() }} produk</p>
                 </div>
+
                 <div class="d-flex align-items-center">
-                    <label class="me-2 text-nowrap">Urutkan:</label>
-                    <select class="form-select form-select-sm" style="width: auto;"
+                    <span class="text-muted small me-2 text-nowrap">Urutkan:</span>
+                    <select class="form-select form-select-sm border-0 bg-light rounded-pill" style="min-width: 180px;"
                             onchange="window.location.href = this.value">
-                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'newest']) }}"
-                                {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>
-                            Terbaru
-                        </option>
-                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_asc']) }}"
-                                {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
-                            Harga: Rendah ke Tinggi
-                        </option>
-                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_desc']) }}"
-                                {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
-                            Harga: Tinggi ke Rendah
-                        </option>
-                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'name_asc']) }}"
-                                {{ request('sort') == 'name_asc' ? 'selected' : '' }}>
-                            Nama: A-Z
-                        </option>
+                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'newest']) }}" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_asc']) }}" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga Terendah</option>
+                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_desc']) }}" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Harga Tertinggi</option>
+                        <option value="{{ request()->fullUrlWithQuery(['sort' => 'name_asc']) }}" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama A-Z</option>
                     </select>
                 </div>
             </div>
@@ -147,18 +167,15 @@
                     @endforeach
                 </div>
 
-                {{-- Pagination seperti codingan kedua --}}
-                <div class="mt-4 d-flex justify-content-center mt-5">
+                <div class="mt-5 d-flex justify-content-center">
                     {{ $products->links('pagination::bootstrap-5') }}
                 </div>
             @else
-                <div class="text-center py-5">
-                    <i class="bi bi-search display-1 text-muted"></i>
-                    <h5 class="mt-3">Produk tidak ditemukan</h5>
-                    <p class="text-muted">Coba ubah filter atau kata kunci pencarian</p>
-                    <a href="{{ route('catalog.index') }}" class="btn btn-primary">
-                        Lihat Semua Produk
-                    </a>
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+                    <img src="https://illustrations.popsy.co/gray/crashed-error.svg" alt="Empty" style="width: 200px;" class="mb-4">
+                    <h5 class="fw-bold">Yah, Produk Tidak Ditemukan</h5>
+                    <p class="text-muted">Coba gunakan filter lain atau hapus pencarian Anda.</p>
+                    <a href="{{ route('catalog.index') }}" class="btn btn-primary rounded-pill px-4">Lihat Semua Produk</a>
                 </div>
             @endif
         </div>

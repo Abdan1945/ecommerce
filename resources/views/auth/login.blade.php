@@ -1,133 +1,183 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-  <div class="row justify-content-center">
-    {{-- ↑ justify-content-center = posisikan di tengah horizontal --}}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <div class="col-md-6">
-      {{-- ↑ col-md-6 = lebar 50% di layar medium ke atas --}}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #4361ee 0%, #4cc9f0 100%);
+        --glass-bg: rgba(255, 255, 255, 0.9);
+    }
 
-      <div class="card shadow-sm">
-        {{-- Card Header --}}
-        <div class="card-header bg-primary text-white text-center">
-          <h4 class="mb-0">🔐 Login ke Akun Anda</h4>
-        </div>
+    body {
+        background: #f8f9fa;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        <div class="card-body p-4">
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
 
-          <form method="POST" action="{{ route('login') }}">
-             @csrf
-            {{-- ================== FIELD EMAIL ================== --}}
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
+    .login-card {
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        max-width: 1000px;
+        width: 100%;
+    }
 
-              <input id="email" type="email" class="form-control @error('email')
-              is-invalid @enderror" {{-- ↑ @error('email') = jika ada error pada
-              field email, tambahkan class 'is-invalid' untuk styling merah --}}
-              name="email" value="{{ old('email') }}" {{-- ↑ old('email') = isi
-              kembali nilai sebelumnya jika form gagal validasi --}} required
-              autocomplete="email" autofocus placeholder="nama@email.com"> {{--
-              Tampilkan pesan error jika ada --}} @error('email')
-              <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-              </span>
-              @enderror
+    /* Bagian Visual (Kiri) */
+    .login-visual {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .login-visual img {
+        width: 80%;
+        margin-bottom: 30px;
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    }
+
+    /* Bagian Form (Kanan) */
+    .login-form-area {
+        padding: 50px;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 12px 20px;
+        border: 2px solid #f1f3f5;
+        background-color: #f8f9fa;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        background-color: #fff;
+        border-color: #4361ee;
+        box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+    }
+
+    .btn-login {
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: transform 0.2s;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-google {
+        border: 2px solid #f1f3f5;
+        border-radius: 12px;
+        padding: 10px;
+        font-weight: 600;
+        color: #495057;
+        transition: all 0.3s;
+    }
+
+    .btn-google:hover {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+    }
+
+    @media (max-width: 768px) {
+        .login-visual { display: none; }
+        .login-form-area { padding: 30px; }
+    }
+</style>
+
+<div class="login-container">
+    <div class="card login-card shadow-lg">
+        <div class="row g-0">
+            <div class="col-md-5 login-visual d-none d-md-flex">
+                <img src="images/lampu3.jpg" alt="Login Illustration">
+                <h3 class="fw-bold">Selamat Datang Kembali!</h3>
+                <p class="opacity-75">Akses dasbor Anda dan kelola semua aktivitas dengan lebih mudah.</p>
             </div>
 
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-
-              <input
-                id="password"
-                type="password"
-
-                class="form-control @error('password') is-invalid @enderror"
-                name="password"
-                required
-                autocomplete="current-password"
-                placeholder="••••••••"
-              />
-
-              @error('password')
-              <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-              </span>
-              @enderror
-            </div>
-
-
-            <div class="mb-3 form-check">
-              <input class="form-check-input" type="checkbox" name="remember"
-              id="remember" {{ old('remember') ? 'checked' : '' }}> {{-- ↑ Jika
-              sebelumnya dicentang, tetap centang --}}
-
-              <label class="form-check-label" for="remember">
-                Ingat Saya
-              </label>
-            </div>
-
-            <div class="d-grid gap-2">
-
-              <button type="submit" class="btn btn-primary btn-lg">
-                Login
-              </button>
-            </div>
-
-
-            <div class="mt-3 text-center">
-              @if (Route::has('password.request'))
-              <a
-                class="text-decoration-none"
-                href="{{ route('password.request') }}"
-              >
-                Lupa Password?
-              </a>
-              @endif
-            </div>
-
-            <hr class="my-4" />
-
-                <div class="d-grid gap-2">
-                  <a href="{{ route('auth.google') }}" class="btn btn-outline-danger btn-lg">
-
-                    <svg class="me-2" width="20" height="20" viewBox="0 0 24 24">
-                      <path
-                        fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      />
-                      <path
-                        fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      />
-                    </svg>
-
-                    Login dengan Google
-                  </a>
+            <div class="col-md-7 login-form-area">
+                <div class="mb-4">
+                    <h2 class="fw-800 mb-1">Login Akun</h2>
+                    <p class="text-muted small">Silakan masukkan detail akun Anda untuk melanjutkan.</p>
                 </div>
 
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
 
-            <p class="mt-4 text-center mb-0">
-              Belum punya akun?
-              <a
-                href="{{ route('register') }}"
-                class="text-decoration-none fw-bold"
-              >
-                Daftar Sekarang
-              </a>
-            </p>
-          </form>
+                    <div class="mb-3">
+                        <label class="form-label fw-600 small">Alamat Email</label>
+                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                               name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+                               placeholder="nama@perusahaan.com">
+                        @error('email')
+                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label class="form-label fw-600 small">Password</label>
+                            @if (Route::has('password.request'))
+                                <a class="text-decoration-none small fw-600" href="{{ route('password.request') }}">Lupa?</a>
+                            @endif
+                        </div>
+                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
+                               name="password" required autocomplete="current-password" placeholder="••••••••">
+                        @error('password')
+                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                            <label class="form-check-label small" for="remember">Ingat saya</label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-login">
+                            Masuk Sekarang <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                    <div class="position-relative my-4">
+                        <hr>
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">Atau masuk dengan</span>
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        <a href="{{ route('auth.google') }}" class="btn btn-google">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" class="me-2">
+                            Google Akun
+                        </a>
+                    </div>
+
+                    <p class="text-center mb-0 small text-muted">
+                        Belum punya akun?
+                        <a href="{{ route('register') }}" class="text-primary fw-bold text-decoration-none">Register</a>
+                    </p>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 @endsection
