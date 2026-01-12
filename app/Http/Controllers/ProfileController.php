@@ -12,6 +12,9 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    /**
+     * Menampilkan halaman form profil.
+     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -19,33 +22,56 @@ class ProfileController extends Controller
         ]);
     }
 
+    /**
+     * Update informasi dasar profil (Nama & Email).
+     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
         $validated = $request->validated();
 
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
-            }
-
-            $filename = 'avatar-' . $user->id . '-' . time() . '.' . $request->file('avatar')->extension();
-            $validated['avatar'] = $request->file('avatar')
-                ->storeAs('avatars', $filename, 'public');
-        } else {
-            unset($validated['avatar']);
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        if ($user->email !== $validated['email']) {
-            $validated['email_verified_at'] = null;
-        }
-
-        $user->update($validated);
+        $user->fill($validated);
+        $user->save();
 
         return Redirect::route('profile.edit')
-            ->with('success', 'Profil berhasil diperbarui!');
+            ->with('success', 'Informasi profil berhasil diperbarui!');
     }
 
+    /**
+     * KHUSUS UPDATE AVATAR
+     * Ini adalah method yang dicari oleh Route profile.avatar.update
+     */
+    public function updateAvatar(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+
+        // Hapus foto lama jika ada
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        // Simpan foto baru dengan nama unik
+        $filename = 'avatar-' . $user->id . '-' . time() . '.' . $request->file('avatar')->extension();
+        $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+
+        // Simpan path ke database
+        $user->update(['avatar' => $path]);
+
+        return Redirect::route('profile.edit')
+            ->with('success', 'Foto profil berhasil diperbarui!');
+    }
+
+    /**
+     * Update password user.
+     */
     public function updatePassword(Request $request): RedirectResponse
     {
         $validated = $request->validateWithBag('updatePassword', [
@@ -57,9 +83,12 @@ class ProfileController extends Controller
             'password' => bcrypt($validated['password']),
         ]);
 
-        return back()->with('status', 'password-updated');
+        return back()->with('success', 'Password berhasil diperbarui!');
     }
 
+    /**
+     * Hapus akun user.
+     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
@@ -70,6 +99,7 @@ class ProfileController extends Controller
 
         Auth::logout();
 
+        // Hapus file avatar dari storage sebelum user dihapus
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
         }
