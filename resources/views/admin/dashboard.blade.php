@@ -58,7 +58,7 @@
                     <div class="icon-shape bg-{{ $card['color'] }}-subtle text-{{ $card['color'] }} mb-3 mb-sm-0">
                         <i class="bi {{ $card['icon'] }} fs-3"></i>
                     </div>
-                    <span class="badge bg-{{ $card['color'] }}-subtle text-{{ $card['color'] }} rounded-pill small">+2.5%</span>
+                    {{-- Badge persentase dihapus dari sini --}}
                 </div>
                 <p class="text-muted mb-1 small fw-bold tracking-wider">{{ $card['title'] }}</p>
                 <h3 class="mb-0 fw-bold text-dark">{{ $card['value'] }}</h3>
@@ -73,7 +73,7 @@
     <div class="col-12" data-aos="zoom-in" data-aos-delay="500">
         <div class="card border-0 shadow-sm rounded-4 p-2">
             <div class="card-header bg-white py-4 border-0 d-flex justify-content-between">
-                <h5 class="mb-0 fw-bold text-dark">Laporan Penjualan Sepekan</h5>
+                <h5 class="mb-0 fw-bold text-dark">Laporan Penjualan</h5>
                 <i class="bi bi-three-dots text-muted"></i>
             </div>
             <div class="card-body">

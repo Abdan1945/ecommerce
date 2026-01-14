@@ -3,124 +3,125 @@
 @section('title', 'Daftar Produk')
 
 @section('content')
-{{-- HEADER PAGE --}}
-<div class="row mb-4">
-    <div class="col-md-7">
-        <h2 class="h3 fw-bold text-primary mb-1">
-            <i class="bi bi-box-seam me-2"></i>Manajemen Produk
-        </h2>
-        <p class="text-muted small">Total {{ $products->total() }} produk terdaftar di sistem.</p>
-    </div>
-    <div class="col-md-5 text-md-end">
-        <div class="d-inline-flex gap-2 mb-2">
-            {{-- Badge Tanggal --}}
-            <div class="badge bg-white text-dark border shadow-sm p-2 px-3 rounded-pill d-flex align-items-center">
-                <i class="bi bi-calendar3 me-2 text-primary"></i> {{ date('d F Y') }}
-            </div>
-
-            {{-- Tombol Lihat Toko --}}
-            <a href="/" target="_blank" class="btn btn-white border shadow-sm rounded-pill px-3 fw-bold d-flex align-items-center">
-                <i class="bi bi-shop me-2 text-primary"></i> Lihat Toko
-            </a>
+<div class="fade-in">
+    {{-- HEADER PAGE --}}
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-7">
+            <h2 class="h3 fw-bold text-primary mb-1">
+                <i class="bi bi-box-seam me-2"></i>Manajemen Produk
+            </h2>
+            <p class="text-muted small">Total <strong>{{ $products->total() }}</strong> produk terdaftar di sistem.</p>
         </div>
-
-        <div>
-            <a href="{{ route('admin.products.create') }}" class="btn btn-primary shadow-sm rounded-pill px-4 fw-bold">
-                <i class="bi bi-plus-lg me-1"></i> Tambah Produk Baru
-            </a>
-        </div>
-
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
-    </div>
-</div>
-
-{{-- FILTER & SEARCH --}}
-<div class="card shadow-sm border-0 mb-4 rounded-3">
-    <div class="card-body p-3">
-        <form method="GET" action="{{ route('admin.products.index') }}" class="row g-2 align-items-center">
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                    <input type="text" name="search" class="form-control border-start-0 ps-0 shadow-none"
-                           placeholder="Cari nama produk..." value="{{ request('search') }}">
+        <div class="col-md-5 text-md-end">
+            <div class="d-inline-flex gap-2 mb-2">
+                {{-- Badge Tanggal --}}
+                <div class="badge bg-white text-dark border shadow-sm p-2 px-3 rounded-pill d-flex align-items-center">
+                    <i class="bi bi-calendar3 me-2 text-primary"></i> {{ date('d F Y') }}
                 </div>
-            </div>
-            <div class="col-md-3">
-                <select name="category" class="form-select border-light-subtle shadow-none">
-                    <option value="">Semua Kategori</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-light border w-100 fw-semibold text-primary rounded-pill">
-                    <i class="bi bi-filter me-1"></i> Filter
-                </button>
-            </div>
-            <div class="col-md-2 text-center">
-                <a href="{{ route('admin.products.index') }}" class="btn btn-link btn-sm text-muted text-decoration-none">Reset</a>
-            </div>
-        </form>
-    </div>
-</div>
 
-{{-- TABLE --}}
-<div class="card shadow-sm border-0 overflow-hidden rounded-3">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light border-bottom">
-                <tr>
-                    <th class="ps-4 py-3" width="80">Gambar</th>
-                    <th class="py-3">Info Produk</th>
-                    <th class="py-3">Kategori</th>
-                    <th class="py-3">Harga</th>
-                    <th class="py-3 text-center">Stok</th>
-                    <th class="py-3 text-center">Status</th>
-                    <th class="py-3 text-end pe-4" width="200">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($products as $product)
-                <tr>
-                    <td class="ps-4">
-                        <img src="{{ $product->primaryImage?->image_url ?? asset('img/no-image.png') }}"
-                             class="rounded border shadow-sm" width="60" height="60" style="object-fit: cover;">
-                    </td>
-                    <td>
-                        <div class="fw-bold text-dark mb-0">{{ $product->name }}</div>
-                        @if($product->is_featured)
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle smaller-badge">
-                                <i class="bi bi-star-fill me-1"></i>Unggulan
+                {{-- Tombol Lihat Toko --}}
+                <a href="/" target="_blank" class="btn btn-white border shadow-sm rounded-pill px-3 fw-bold d-flex align-items-center btn-hover-scale">
+                    <i class="bi bi-shop me-2 text-primary"></i> Lihat Toko
+                </a>
+            </div>
+
+            <div>
+                <a href="{{ route('admin.products.create') }}" class="btn btn-primary shadow-sm rounded-pill px-4 fw-bold btn-hover-scale">
+                    <i class="bi bi-plus-lg me-1"></i> Tambah Produk Baru
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- FILTER & SEARCH --}}
+    <div class="card shadow-sm border-0 mb-4 rounded-3 hover-shadow-soft">
+        <div class="card-body p-3">
+            <form method="GET" action="{{ route('admin.products.index') }}" class="row g-2 align-items-center">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0 ps-0 shadow-none"
+                               placeholder="Cari nama produk..." value="{{ request('search') }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="category" class="form-select border-light-subtle shadow-none">
+                        <option value="">Semua Kategori</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-light border w-100 fw-semibold text-primary rounded-pill btn-hover-scale">
+                        <i class="bi bi-filter me-1"></i> Filter
+                    </button>
+                </div>
+                <div class="col-md-2 text-center">
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-link btn-sm text-muted text-decoration-none">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- TABLE --}}
+    <div class="card shadow-sm border-0 overflow-hidden rounded-3">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light border-bottom">
+                    <tr>
+                        <th class="ps-4 py-3" width="80">Gambar</th>
+                        <th class="py-3">Info Produk</th>
+                        <th class="py-3">Kategori</th>
+                        <th class="py-3">Harga</th>
+                        <th class="py-3 text-center">Stok</th>
+                        <th class="py-3 text-center">Status</th>
+                        <th class="py-3 text-end pe-4" width="200">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($products as $product)
+                    <tr class="product-row">
+                        <td class="ps-4">
+                            <div class="image-zoom-container">
+                                <img src="{{ $product->primaryImage?->image_url ?? asset('img/no-image.png') }}"
+                                     class="rounded border shadow-sm" width="60" height="60" style="object-fit: cover;">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark mb-0">{{ $product->name }}</div>
+                            @if($product->is_featured)
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle smaller-badge">
+                                    <i class="bi bi-star-fill me-1"></i>Unggulan
+                                </span>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="text-secondary small fw-medium">{{ $product->category->name }}</span>
+                        </td>
+                        <td>
+                            @if($product->discount_price && $product->discount_price < $product->price)
+                                <div class="fw-bold text-primary">Rp {{ number_format($product->discount_price, 0, ',', '.') }}</div>
+                                <small class="text-muted text-decoration-line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</small>
+                            @else
+                                <div class="fw-bold text-primary">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            @if($product->stock <= 5)
+                                <span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ $product->stock }}</span>
+                            @else
+                                <span class="text-dark fw-medium">{{ $product->stock }}</span>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            <span class="badge rounded-pill {{ $product->is_active ? 'status-active' : 'status-inactive' }} px-3">
+                                {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
                             </span>
-                        @endif
-                    </td>
-                    <td>
-                        <span class="text-secondary small fw-medium">{{ $product->category->name }}</span>
-                    </td>
-                    <td>
-                        @if($product->discount_price && $product->discount_price < $product->price)
-                            <div class="fw-bold text-primary">Rp {{ number_format($product->discount_price, 0, ',', '.') }}</div>
-                            <small class="text-muted text-decoration-line-through">Rp {{ number_format($product->price, 0, ',', '.') }}</small>
-                        @else
-                            <div class="fw-bold text-primary">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-                        @endif
-                    </td>
-                    <td class="text-center">
-                        @if($product->stock <= 5)
-                            <span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ $product->stock }}</span>
-                        @else
-                            <span class="text-dark fw-medium">{{ $product->stock }}</span>
-                        @endif
-                    </td>
-                    <td class="text-center">
-                        <span class="badge rounded-pill {{ $product->is_active ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-secondary-subtle text-secondary border border-secondary-subtle' }} px-3">
-                            {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
-                        </span>
-                    </td>
-                    <td class="text-end pe-4">
+                        </td>
+                        <td class="text-end pe-4">
                         <div class="btn-group shadow-sm rounded-pill border bg-white p-1">
                             {{-- Lihat Detail --}}
                             <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-action btn-view" title="Lihat Detail">
@@ -150,17 +151,18 @@
                             </form>
                         </div>
                     </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="7" class="text-center py-5">
-                        <i class="bi bi-box-seam display-1 text-light-emphasis mb-3 d-block"></i>
-                        <h5 class="text-muted">Produk tidak ditemukan</h5>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <i class="bi bi-box-seam display-1 text-light-emphasis mb-3 d-block opacity-25"></i>
+                            <h5 class="text-muted">Produk tidak ditemukan</h5>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -169,36 +171,52 @@
 </div>
 
 <style>
-    .smaller-badge { font-size: 0.65rem; padding: 2px 6px; }
-    .btn-white { background: #fff; }
-    .btn-white:hover { background-color: #f8f9fa; }
-    .table-hover tbody tr:hover { background-color: rgba(13, 110, 253, 0.02); }
+    /* Animasi Masuk Halaman */
+    .fade-in { animation: fadeIn 0.6s ease-out; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-    /* Styling khusus tombol aksi */
+    /* Hover effects */
+    .btn-hover-scale { transition: transform 0.2s, box-shadow 0.2s; }
+    .btn-hover-scale:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    
+    .product-row { transition: background-color 0.2s; }
+    .product-row:hover { background-color: #f8fbff !important; }
+
+    /* Zoom Image */
+    .image-zoom-container { overflow: hidden; border-radius: 8px; width: 60px; height: 60px; }
+    .image-zoom-container img { transition: transform 0.3s; }
+    .product-row:hover .image-zoom-container img { transform: scale(1.15); }
+
+    /* Badges Custom */
+    .smaller-badge { font-size: 0.7rem; padding: 3px 8px; font-weight: 600; border-radius: 4px; }
+    .status-active { background-color: #e8fadf; color: #28a745; border: 1px solid #d4f2c4; }
+    .status-inactive { background-color: #f8f9fa; color: #6c757d; border: 1px solid #e9ecef; }
+
+    /* Tombol Aksi Bulat & Berwarna Soft */
     .btn-action {
-        width: 32px;
-        height: 32px;
+        width: 38px;
+        height: 38px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50% !important;
+        border-radius: 10px !important;
         transition: all 0.2s;
         border: none;
-        background: transparent;
-        margin: 0 2px;
+        text-decoration: none;
     }
 
-    .btn-view i { color: #0dcaf0; }
-    .btn-edit svg, .btn-edit i { color: #ffc107; } /* Warna Kuning untuk icon SVG Brush */
-    .btn-delete i { color: #dc3545; }
+    .btn-view { background-color: #e0f7fa; color: #00bcd4; }
+    .btn-view:hover { background-color: #00bcd4; color: white; transform: translateY(-3px); }
 
-    .btn-action:hover {
-        background-color: #f0f2f5;
-        transform: translateY(-2px);
-    }
+    .btn-edit { background-color: #fff8e1; color: #ffc107; }
+    .btn-edit:hover { background-color: #ffc107; color: white; transform: translateY(-3px); }
 
-    .btn-view:hover { background-color: rgba(13, 202, 240, 0.1); }
-    .btn-edit:hover { background-color: rgba(255, 193, 7, 0.1); }
-    .btn-delete:hover { background-color: rgba(220, 53, 69, 0.1); }
+    .btn-delete { background-color: #ffebee; color: #ef5350; }
+    .btn-delete:hover { background-color: #ef5350; color: white; transform: translateY(-3px); }
+
+    .btn-white { background: #fff; }
 </style>
 @endsection

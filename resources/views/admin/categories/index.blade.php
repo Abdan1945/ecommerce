@@ -3,70 +3,78 @@
 @section('title', 'Manajemen Kategori')
 
 @section('content')
-<div class="row">
+<div class="row fade-in">
     <div class="col-lg-12">
         {{-- Alert Notifikasi --}}
         @if(session('success'))
-            <div class="alert alert-success border-0 shadow-sm alert-dismissible fade show">
-                <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+            <div class="alert alert-custom alert-success border-0 shadow-sm alert-dismissible fade show mb-4 mt-2">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
         @if($errors->any())
-            <div class="alert alert-danger border-0 shadow-sm">
+            <div class="alert alert-custom alert-danger border-0 shadow-sm mb-4 mt-2">
                 <ul class="mb-0">
                     @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                        <li><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-primary fw-bold"><i class="bi bi-grid-fill me-2"></i>Daftar Kategori</h5>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+        <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+                <h5 class="mb-0 text-dark fw-bold">
+                    <i class="bi bi-grid-fill text-primary me-2"></i>Daftar Kategori
+                </h5>
+                <button class="btn btn-primary btn-hover-scale shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#createModal">
                     <i class="bi bi-plus-lg me-1"></i> Kategori Baru
                 </button>
             </div>
+            
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead class="bg-light">
                             <tr>
-                                <th class="ps-4">Detail Kategori</th>
-                                <th class="text-center">Total Produk</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-end pe-4">Aksi</th>
+                                <th class="ps-4 py-3 text-muted text-uppercase fs-xs">Detail Kategori</th>
+                                <th class="text-center text-muted text-uppercase fs-xs">Total Produk</th>
+                                <th class="text-center text-muted text-uppercase fs-xs">Status</th>
+                                <th class="text-end pe-4 text-muted text-uppercase fs-xs">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($categories as $category)
-                                <tr>
+                                <tr class="category-row">
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
-                                            @if($category->image)
-                                                <img src="{{ asset('storage/' . $category->image) }}" class="rounded shadow-sm me-3" width="45" height="45" style="object-fit: cover;">
-                                            @else
-                                                <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                                                    <i class="bi bi-tag text-muted"></i>
-                                                </div>
-                                            @endif
+                                            <div class="image-wrapper me-3">
+                                                @if($category->image)
+                                                    <img src="{{ asset('storage/' . $category->image) }}" class="rounded-3 shadow-sm border" width="50" height="50" style="object-fit: cover;">
+                                                @else
+                                                    <div class="bg-light rounded-3 border d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                        <i class="bi bi-tag text-muted fs-4"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
                                             <div>
-                                                <div class="fw-bold">{{ $category->name }}</div>
-                                                <small class="text-muted">slug: {{ $category->slug }}</small>
+                                                <div class="fw-bold text-dark">{{ $category->name }}</div>
+                                                <small class="text-muted d-block">slug: <span class="text-primary">{{ $category->slug }}</span></small>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-light text-dark border">{{ $category->products_count ?? 0 }} Produk</span>
+                                        <span class="badge bg-light text-dark border fw-medium rounded-pill px-3">{{ $category->products_count ?? 0 }} Produk</span>
                                     </td>
                                     <td class="text-center">
                                         @if($category->is_active)
-                                            <span class="badge bg-success-subtle text-success px-3">Aktif</span>
+                                            <span class="status-badge active"><i class="bi bi-circle-fill me-1"></i> Aktif</span>
                                         @else
-                                            <span class="badge bg-secondary-subtle text-secondary px-3">Non-Aktif</span>
+                                            <span class="status-badge inactive"><i class="bi bi-circle-fill me-1"></i> Non-Aktif</span>
                                         @endif
                                     </td>
                                     <td class="text-end pe-4">
@@ -92,45 +100,51 @@
                                 </tr>
 
                                 {{-- MODAL EDIT --}}
-                                <div class="modal fade" id="editModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form action="{{ route('admin.categories.update', $category->id) }}" method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Edit Kategori</h5>
+                                <div class="modal fade zoom-in" id="editModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content border-0 shadow-lg">
+                                            <form action="{{ route('admin.categories.update', $category->id) }}" method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-header border-bottom-0 pt-4 px-4">
+                                                    <h5 class="modal-title fw-bold">Edit Kategori</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
-                                                <div class="modal-body">
+                                                <div class="modal-body px-4 pb-4">
                                                     <div class="mb-3">
                                                         <label class="form-label fw-bold">Nama Kategori</label>
-                                                        <input type="text" name="name" class="form-control" value="{{ $category->name }}" required>
+                                                        <input type="text" name="name" class="form-control form-control-lg fs-6 shadow-none" value="{{ $category->name }}" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label fw-bold">Ganti Gambar</label>
-                                                        <input type="file" name="image" class="form-control" accept="image/*">
-                                                        <small class="text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
+                                                        <div class="input-group">
+                                                            <input type="file" name="image" class="form-control shadow-none" accept="image/*">
+                                                        </div>
+                                                        <small class="text-muted mt-1 d-block"><i class="bi bi-info-circle me-1"></i>Biarkan kosong jika tidak ingin mengubah gambar.</small>
                                                     </div>
-                                                    <div class="form-check form-switch mt-3">
-                                                        <input type="hidden" name="is_active" value="0">
-                                                        <input class="form-check-input" type="checkbox" name="is_active" value="1" id="switch{{$category->id}}" {{ $category->is_active ? 'checked' : '' }}>
-                                                        <label class="form-check-label fw-bold" for="switch{{$category->id}}">Status Aktif</label>
+                                                    <div class="bg-light p-3 rounded-3 mt-4">
+                                                        <div class="form-check form-switch d-flex justify-content-between align-items-center ps-0">
+                                                            <label class="form-check-label fw-bold mb-0" for="switch{{$category->id}}">Status Kategori</label>
+                                                            <input type="hidden" name="is_active" value="0">
+                                                            <input class="form-check-input ms-0 mt-0" style="width: 3em; height: 1.5em; cursor: pointer;" type="checkbox" name="is_active" value="1" id="switch{{$category->id}}" {{ $category->is_active ? 'checked' : '' }}>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="modal-footer bg-light">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                                    <button type="submit" class="btn btn-warning px-4">Update</button>
+                                                <div class="modal-footer border-top-0 px-4 pb-4">
+                                                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Tutup</button>
+                                                    <button type="submit" class="btn btn-primary px-4 shadow-sm">Simpan Perubahan</button>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             @empty
                                 <tr>
                                     <td colspan="4" class="text-center py-5 text-muted">
-                                        <i class="bi bi-folder-x display-4 d-block mb-3"></i>
-                                        Belum ada kategori ditemukan.
+                                        <div class="py-4">
+                                            <i class="bi bi-folder-x display-1 d-block mb-3 opacity-25"></i>
+                                            <h6 class="fw-bold">Belum ada kategori ditemukan.</h6>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
@@ -143,36 +157,92 @@
 </div>
 
 {{-- MODAL TAMBAH (Create) --}}
-<div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
+<div class="modal fade zoom-in" id="createModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header border-bottom-0 pt-4 px-4">
                     <h5 class="modal-title fw-bold">Tambah Kategori Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body px-4 pb-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Kategori</label>
-                        <input type="text" name="name" class="form-control" required placeholder="Contoh: Sepatu Olahraga">
+                        <input type="text" name="name" class="form-control form-control-lg fs-6 shadow-none" required placeholder="Contoh: Sepatu Olahraga">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Gambar Cover</label>
-                        <input type="file" name="image" class="form-control" accept="image/*">
+                        <input type="file" name="image" class="form-control shadow-none" accept="image/*">
                     </div>
-                    <div class="form-check form-switch">
-                        <input type="hidden" name="is_active" value="0">
-                        <input class="form-check-input" type="checkbox" name="is_active" value="1" id="switchCreate" checked>
-                        <label class="form-check-label fw-bold" for="switchCreate">Aktifkan Sekarang</label>
+                    <div class="bg-light p-3 rounded-3 mt-4">
+                        <div class="form-check form-switch d-flex justify-content-between align-items-center ps-0">
+                            <label class="form-check-label fw-bold mb-0" for="switchCreate">Aktifkan Sekarang</label>
+                            <input type="hidden" name="is_active" value="0">
+                            <input class="form-check-input ms-0 mt-0" style="width: 3em; height: 1.5em; cursor: pointer;" type="checkbox" name="is_active" value="1" id="switchCreate" checked>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary px-4">Simpan</button>
+                <div class="modal-footer border-top-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">Simpan Kategori</button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
+
+<style>
+    /* Animasi Dasar */
+    .fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .zoom-in .modal-content { animation: zoomIn 0.3s ease-out; }
+    @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Custom Badges */
+    .status-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+    }
+    .status-badge.active { background-color: #e8fadf; color: #28a745; }
+    .status-badge.inactive { background-color: #f8f9fa; color: #6c757d; }
+    .status-badge i { font-size: 6px; }
+
+    /* Buttons */
+    .btn-hover-scale { transition: all 0.2s; }
+    .btn-hover-scale:hover { transform: translateY(-2px); }
+    
+    .btn-icon {
+        width: 40px; /* Ukuran diperbesar sedikit */
+        height: 40px; /* Ukuran diperbesar sedikit */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        border: none;
+        transition: all 0.2s;
+    }
+    .btn-warning-soft { background-color: #fff8e6; color: #f39c12; }
+    .btn-warning-soft:hover { background-color: #f39c12; color: white; }
+    
+    .btn-danger-soft { background-color: #ffeef0; color: #dc3545; }
+    .btn-danger-soft:hover { background-color: #dc3545; color: white; }
+
+    /* UI Helper */
+    .fs-xs { font-size: 11px; letter-spacing: 0.5px; }
+    .category-row { transition: background 0.2s; }
+    .category-row:hover { background-color: #fbfcfe !important; }
+    .image-wrapper img { transition: transform 0.3s; }
+    .category-row:hover .image-wrapper img { transform: scale(1.1); }
+    
+    .form-control:focus {
+        border-color: #5d87ff;
+        background-color: #fff;
+    }
+</style>
 @endsection

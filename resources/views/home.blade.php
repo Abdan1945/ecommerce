@@ -70,19 +70,14 @@
 {{-- PRODUK UNGGULAN --}}
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
-            <div>
-                <h2 class="fw-bold display-6 mb-0">Produk Unggulan</h2>
-                <p class="text-muted mb-0">Pilihan terbaik untuk kamu</p>
-            </div>
-            <a href="{{ route('catalog.index') }}" class="btn btn-outline-primary rounded-pill px-4 hover-arrow transition-all">
-                Lihat Semua <span class="arrow-move">→</span>
-            </a>
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold display-6">Produk Terbaru</h2>
+            <p class="text-muted">Update produk terbaru setiap hari</p>
         </div>
 
         <div class="row g-4">
-            @foreach($featuredProducts as $index => $product)
-                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+            @foreach($latestProducts as $index => $product)
+                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $index * 50 }}">
                     <div class="product-wrapper transition-all">
                         @include('partials.product-card', ['product' => $product])
                     </div>
@@ -126,17 +121,23 @@
     </div>
 </section>
 
-{{-- PRODUK TERBARU --}}
+
+
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="fw-bold display-6">Produk Terbaru</h2>
-            <p class="text-muted">Update produk terbaru setiap hari</p>
+        <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
+            <div>
+                <h2 class="fw-bold display-6 mb-0">Produk Unggulan</h2>
+                <p class="text-muted mb-0">Pilihan terbaik untuk kamu</p>
+            </div>
+            <a href="{{ route('catalog.index') }}" class="btn btn-outline-primary rounded-pill px-4 hover-arrow transition-all">
+                Lihat Semua <span class="arrow-move">→</span>
+            </a>
         </div>
 
         <div class="row g-4">
-            @foreach($latestProducts as $index => $product)
-                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $index * 50 }}">
+            @foreach($featuredProducts as $index => $product)
+                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                     <div class="product-wrapper transition-all">
                         @include('partials.product-card', ['product' => $product])
                     </div>
@@ -145,7 +146,6 @@
         </div>
     </div>
 </section>
-
 @endsection
 
 @section('styles')

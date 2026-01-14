@@ -1,110 +1,213 @@
-<aside class="left-sidebar shadow-sm" style="background: #fff; border-right: 1px solid rgba(0,0,0,0.05);">
-    <div>
-        <div class="brand-logo d-flex align-items-center justify-content-between">
-    <a href="{{ url('/') }}" class="text-nowrap logo-img d-flex align-items-center text-decoration-none">
-        <img src="{{ asset('images/admin.webp') }}"
-             alt="Logo"
-             width="50"
-             height="50"
-             style="object-fit: cover; border-radius: 50%; border: 2px solid #fbbf24;"
-             onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Toko+Kami&background=fbbf24&color=020617';">
+<aside class="left-sidebar">
+    <div class="sidebar-container">
+        
+        <div class="brand-logo d-flex align-items-center justify-content-between px-4">
+            <a href="{{ url('/') }}" class="logo-img d-flex align-items-center text-decoration-none">
+                <div class="logo-wrapper">
+                    <img src="{{ asset('images/admin.webp') }}" 
+                         alt="Logo" 
+                         onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Admin&background=5d87ff&color=fff';">
+                </div>
+                <div class="brand-text ms-3">
+                    <span class="fw-bolder text-dark fs-5 d-block">Admin Panel</span>
+                    <span class="text-muted small" style="font-size: 10px; letter-spacing: 1px;">MANAGEMENT SYSTEM</span>
+                </div>
+            </a>
+            <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                <i class="ti ti-x fs-6"></i>
+            </div>
+        </div>
 
-        <span class="ms-2 fw-bold text-dark fs-5">AbdanStore</span>
-    </a>
-
-    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-        <i class="ti ti-x fs-8"></i>
-    </div>
-</div>
-
-        <nav class="sidebar-nav scroll-sidebar px-3" data-simplebar="">
-            <ul id="sidebarnav" class="mt-3">
-                <li class="nav-small-cap mb-2">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4 text-primary"></i>
-                    <span class="hide-menu fw-bold text-uppercase small" style="letter-spacing: 1px; color: #a1aab2;">Admin Menu</span>
+        <nav class="sidebar-nav px-3">
+            <ul id="sidebarnav">
+                
+                <li class="nav-label">Main Menu</li>
+                
+                <li class="sidebar-item">
+                    <a class="sidebar-link {{ Request::is('admin/dashboard') ? 'active' : '' }}" href="/admin/dashboard">
+                        <i class="ti ti-layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
                 </li>
 
+                <li class="nav-label">Inventory & Sales</li>
+
                 <li class="sidebar-item">
-                    <a class="sidebar-link rounded-3 mb-1 {{ Request::is('admin/dashboard') ? 'active' : '' }}" href="/admin/dashboard" aria-expanded="false">
-                        <span class="icon-box">
-                            <i class="ti ti-layout-dashboard fs-5"></i>
-                        </span>
-                        <span class="hide-menu fw-medium">Dashboard</span>
+                    <a class="sidebar-link {{ Request::is('admin/categories*') ? 'active' : '' }}" href="/admin/categories">
+                        <i class="ti ti-category"></i>
+                        <span>Kategori</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link rounded-3 mb-1 {{ Request::is('admin/categories*') ? 'active' : '' }}" href="/admin/categories" aria-expanded="false">
-                        <span class="icon-box">
-                            <i class="ti ti-category fs-5"></i>
-                        </span>
-                        <span class="hide-menu fw-medium">Kategori</span>
+                    <a class="sidebar-link {{ Request::is('admin/products*') ? 'active' : '' }}" href="/admin/products">
+                        <i class="ti ti-package"></i>
+                        <span>Produk</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link rounded-3 mb-1 {{ Request::is('admin/products*') ? 'active' : '' }}" href="/admin/products" aria-expanded="false">
-                        <span class="icon-box">
-                            <i class="ti ti-package fs-5"></i>
-                        </span>
-                        <span class="hide-menu fw-medium">Produk</span>
+                    <a class="sidebar-link {{ Request::is('admin/orders*') ? 'active' : '' }}" href="/admin/orders">
+                        <i class="ti ti-receipt"></i>
+                        <span>Pesanan</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item">
-                    <a class="sidebar-link rounded-3 mb-1 {{ Request::is('admin/orders*') ? 'active' : '' }}" href="/admin/orders" aria-expanded="false">
-                        <span class="icon-box">
-                            <i class="ti ti-receipt fs-5"></i>
-                        </span>
-                        <span class="hide-menu fw-medium">Pesanan</span>
-                    </a>
-                </li>
+                <li class="py-4"></li>
             </ul>
         </nav>
     </div>
 </aside>
-
 <style>
-    /* Transisi Halus */
-    .transition-all { transition: all 0.3s ease; }
+    /* Root Variables untuk kemudahan kustomisasi warna */
+    :root {
+        --primary-color: #5d87ff;
+        --primary-light: rgba(93, 135, 255, 0.1);
+        --sidebar-bg: #ffffff;
+        --text-main: #2a3547;
+        --text-muted: #7c8fac;
+        --transition-speed: 0.3s;
+        --border-color: #dfe5ef;
+    }
 
-    /* Styling Link Sidebar */
+    /* Main Sidebar Container */
+    .left-sidebar {
+        background: var(--sidebar-bg);
+        border-right: 1px dashed var(--border-color);
+        height: 100vh;
+        width: 270px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        transition: all var(--transition-speed) ease;
+    }
+
+    /* Logo Section */
+    .brand-logo {
+        height: 90px;
+        border-bottom: 1px solid rgba(0,0,0,0.03);
+        margin-bottom: 15px;
+    }
+
+    .logo-wrapper {
+        position: relative;
+    }
+
+    .logo-wrapper img {
+        width: 45px;
+        height: 45px;
+        border-radius: 14px;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 15px rgba(93, 135, 255, 0.2);
+        transition: transform 0.5s ease;
+    }
+
+    .logo-img:hover .logo-wrapper img {
+        transform: rotate(5deg) scale(1.05);
+    }
+
+    /* Label Menu (Text Abu-abu Kecil) */
+    .nav-label {
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--text-muted);
+        padding: 25px 15px 10px;
+        list-style: none;
+    }
+
+    /* Link Menu */
+    #sidebarnav {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
     .sidebar-link {
         display: flex;
         align-items: center;
-        padding: 12px 15px;
-        color: #5a6a85;
+        padding: 12px 18px;
+        margin-bottom: 5px;
+        color: var(--text-main);
         text-decoration: none;
-        transition: all 0.3s ease;
+        border-radius: 12px;
+        transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
 
-    /* Efek Hover */
+    /* Ikon Menu */
+    .sidebar-link i {
+        font-size: 22px;
+        margin-right: 14px;
+        color: var(--text-muted);
+        transition: all var(--transition-speed) ease;
+    }
+
+    .sidebar-link span {
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    /* Hover State */
     .sidebar-link:hover {
-        background-color: rgba(93, 135, 255, 0.1);
-        color: #5d87ff;
+        background-color: var(--primary-light);
+        color: var(--primary-color);
+        transform: translateX(5px);
     }
 
-    /* State Active (Jika menggunakan Laravel) */
+    .sidebar-link:hover i {
+        color: var(--primary-color);
+    }
+
+    /* Active State (Halaman yang sedang dibuka) */
     .sidebar-link.active {
-        background-color: #5d87ff !important;
-        color: #fff !important;
-        box-shadow: 0 4px 10px rgba(93, 135, 255, 0.3);
+        background: var(--primary-color) !important;
+        color: #ffffff !important;
+        box-shadow: 0 10px 20px rgba(93, 135, 255, 0.3);
     }
 
-    .sidebar-link.active i {
-        color: #fff !important;
+    .sidebar-link.active i, 
+    .sidebar-link.active span {
+        color: #ffffff !important;
     }
 
-    /* Icon Box agar lebih rapi */
-    .icon-box {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        margin-right: 10px;
+    /* Indikator Titik Putih saat Active */
+    .sidebar-link.active::after {
+        content: "";
+        position: absolute;
+        right: 15px;
+        width: 6px;
+        height: 6px;
+        background: rgba(255,255,255,0.7);
+        border-radius: 50%;
     }
 
-    .hover-bg-light:hover {
-        background-color: #f8f9fa;
+    /* Scrollbar Tipis */
+    .sidebar-nav {
+        height: calc(100vh - 100px);
+        overflow-y: auto;
     }
+
+    .sidebar-nav::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb:hover {
+        background: #e2e2e2;
+    }
+
+    
+    @media (max-width: 1199px) {
+        .left-sidebar {
+            left: -270px; 
+        }
 </style>

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
 <style>
     /* Desain Badge Kustom */
     .status-badge {
@@ -14,40 +16,61 @@
 
     /* Hover effect pada baris tabel */
     .table-order tbody tr {
-        transition: all 0.2s ease-in-out;
+        transition: all 0.3s ease;
     }
     .table-order tbody tr:hover {
-        background-color: #f8f9fa;
-        transform: scale(1.002);
-        box-shadow: inset 4px 0 0 0 var(--bs-primary);
+        background-color: rgba(37, 117, 252, 0.03);
+        transform: scale(1.01);
+        z-index: 1;
+        position: relative;
     }
 
     /* Card Styling */
     .order-main-card {
         border: none;
-        border-radius: 16px;
+        border-radius: 20px;
         overflow: hidden;
+        transition: all 0.3s ease;
     }
 
     .empty-state-icon {
-        font-size: 4rem;
+        font-size: 5rem;
         background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        opacity: 0.3;
+        opacity: 0.5;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    /* Animasi Mengapung untuk Icon Kosong */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+
+    /* Custom Button Group Hover */
+    .btn-group .btn {
+        transition: all 0.2s;
+    }
+    .btn-group .btn:hover {
+        background-color: #f1f4f9;
+        letter-spacing: 0.5px;
     }
 </style>
 
 <div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-down" data-aos-duration="800">
         <div>
             <h1 class="h3 fw-bold text-dark mb-1">Riwayat Pesanan</h1>
             <p class="text-muted small mb-0">Pantau status dan detail belanja Anda di sini.</p>
         </div>
-        <i class="bi bi-bag-check text-primary fs-2 opacity-25"></i>
+        <div class="bg-primary-subtle rounded-circle p-3" data-aos="zoom-in" data-aos-delay="200">
+            <i class="bi bi-bag-check text-primary fs-3"></i>
+        </div>
     </div>
 
-    <div class="card order-main-card shadow-sm">
+    <div class="card order-main-card shadow-sm border-0" data-aos="fade-up" data-aos-duration="1000">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-order align-middle mb-0">
@@ -61,8 +84,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($orders as $order)
-                        <tr>
+                        @forelse($orders as $index => $order)
+                        <tr data-aos="fade-up" data-aos-delay="{{ 100 * ($index + 1) }}" data-aos-offset="0">
                             <td class="ps-4 py-4">
                                 <div class="d-flex align-items-center">
                                     <div class="bg-primary-subtle text-primary rounded-3 p-2 me-3 d-none d-sm-block">
@@ -97,12 +120,12 @@
                                 <span class="fw-bold text-dark">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
                             </td>
                             <td class="text-end pe-4 py-4">
-                                <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                                <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
                                     <a href="{{ route('orders.show', $order) }}" class="btn btn-white btn-sm px-3 fw-bold border-end">
                                         Detail
                                     </a>
                                     @if($order->status == 'pending')
-                                        <a href="{{ route('orders.show', $order) }}" class="btn btn-primary btn-sm px-3">
+                                        <a href="{{ route('orders.show', $order) }}" class="btn btn-primary btn-sm px-3 fw-bold">
                                             Bayar
                                         </a>
                                     @endif
@@ -111,11 +134,13 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5">
-                                <i class="bi bi-cart-x empty-state-icon d-block mb-3"></i>
-                                <h5 class="fw-bold text-dark">Belum ada pesanan</h5>
-                                <p class="text-muted small">Sepertinya Anda belum melakukan transaksi apapun.</p>
-                                <a href="/" class="btn btn-primary rounded-pill px-4 mt-2">Mulai Belanja</a>
+                            <td colspan="6" class="text-center py-5">
+                                <div data-aos="zoom-in">
+                                    <i class="bi bi-cart-x empty-state-icon d-block mb-3"></i>
+                                    <h5 class="fw-bold text-dark">Belum ada pesanan</h5>
+                                    <p class="text-muted small">Sepertinya Anda belum melakukan transaksi apapun.</p>
+                                    <a href="/" class="btn btn-primary rounded-pill px-4 mt-2 shadow-sm">Mulai Belanja</a>
+                                </div>
                             </td>
                         </tr>
                         @endforelse
@@ -133,4 +158,15 @@
         @endif
     </div>
 </div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-in-out'
+        });
+    });
+</script>
 @endsection
