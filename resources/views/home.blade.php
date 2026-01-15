@@ -1,32 +1,50 @@
 @extends('layouts.app')
 
-@section('title', 'Lampu Hias - Beranda')
+@section('title', 'Beranda')
 
 @section('content')
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
-{{-- HERO SECTION --}}
-<section class="py-4">
-    <div class="container" data-aos="fade-down" data-aos-duration="1000">
-        <div class="hero-banner-v2 rounded-5 shadow-lg d-flex align-items-center justify-content-center overflow-hidden position-relative"
-             style="height: 480px; background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ asset('images/lampu3.jpg') }}'); background-size: cover; background-position: center;">
+{{--
+    =========================================
+    HERO SECTION
+    =========================================
+--}}
+<section class="py-4 py-lg-5">
+    <div class="container">
+        <div class="hero-banner-v2 rounded-5 shadow-lg d-flex align-items-center justify-content-center position-relative overflow-hidden"
+             data-aos="zoom-in"
+             data-aos-duration="1200"
+             style="background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), url('{{ asset('images/lampu3.jpg') }}');">
 
-            <div class="hero-content text-center p-4 w-100 position-relative" style="z-index: 2;">
-                <h1 class="fw-bold text-white mb-2 display-5 shadow-text animate__animated animate__fadeInDown">
-                    Solusi Pencahayaan Rumah, Lebih Cepat & Terpercaya
+            <div class="hero-content text-center p-4 w-100 z-1">
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-3 fw-bold animate__animated animate__fadeInDown">
+                    <i class="bi bi-stars me-1"></i> KOLEKSI TERBARU 2026
+                </span>
+
+                <h1 class="fw-extrabold text-white mb-3 display-4 shadow-text ls-tight" data-aos="fade-up" data-aos-delay="200">
+                    Sempurnakan Hunian Dengan <br>
+                    <span class="text-warning">Cahaya Estetik</span>
                 </h1>
-                <p class="text-white mb-4 opacity-90 shadow-text lead animate__animated animate__fadeInUp animate__delay-1s">
-                    Temukan koleksi lampu berkualitas untuk setiap sudut ruangan Anda.
+
+                <p class="text-white-50 mb-5 max-w-600 mx-auto lead shadow-text d-none d-md-block" data-aos="fade-up" data-aos-delay="400">
+                    Koleksi lampu eksklusif dari desainer ternama untuk menciptakan atmosfer ruangan yang hangat, nyaman, dan mewah.
                 </p>
 
-                <div class="search-container position-relative w-100 mx-auto animate__animated animate__zoomIn animate__delay-1s" style="max-width: 650px;">
-                    <form action="{{ route('catalog.index') }}" method="GET" class="d-flex glass-search p-2 rounded-pill">
-                        <input type="text" name="search" class="form-control rounded-pill ps-4 py-3 border-0 shadow-none search-input"
-                               placeholder="Cari produk, lampu hias, aksesoris..." value="{{ request('search') }}">
-                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold ms-2 shadow-sm transition-all hover-scale">
-                            <i class="bi bi-search me-2"></i>Cari
-                        </button>
+                {{-- SEARCH BAR --}}
+                <div class="search-container position-relative w-100 mx-auto" style="max-width: 700px;" data-aos="fade-up" data-aos-delay="600">
+                    <form action="{{ route('catalog.index') }}" method="GET" class="glass-search p-2 rounded-pill shadow-lg bg-white">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-0 ps-4">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" name="search" class="form-control bg-transparent border-0 text-dark ps-2 py-3 no-focus"
+                                   placeholder="Cari lampu gantung, LED, atau lampu hias..."
+                                   value="{{ request('search') }}">
+                            <button type="submit" class="btn btn-warning rounded-pill px-4 px-md-5 py-2 fw-bold shadow-sm transition-all hover-scale">
+                                Cari Sekarang
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -34,7 +52,11 @@
     </div>
 </section>
 
-{{-- KATEGORI PILIHAN --}}
+{{--
+    =========================================
+    CATEGORY SECTION
+    =========================================
+--}}
 <section class="py-5 bg-white">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
@@ -67,78 +89,27 @@
     </div>
 </section>
 
-{{-- PRODUK UNGGULAN --}}
-<section class="py-5 bg-light">
+{{--
+    =========================================
+    LATEST PRODUCTS SECTION
+    =========================================
+--}}
+<section class="py-5 bg-light position-relative">
     <div class="container">
-        <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="fw-bold display-6">Produk Terbaru</h2>
-            <p class="text-muted">Update produk terbaru setiap hari</p>
-        </div>
-
-        <div class="row g-4">
-            @foreach($latestProducts as $index => $product)
-                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $index * 50 }}">
-                    <div class="product-wrapper transition-all">
-                        @include('partials.product-card', ['product' => $product])
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-{{-- PROMO SECTION --}}
-<section class="py-5 bg-white">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-6" data-aos="fade-right">
-                <div class="card border-0 shadow-lg rounded-5 overflow-hidden h-100 shine-hover" style="background: linear-gradient(135deg, #fff5e6, #fffaf0);">
-                    <div class="card-body p-5 text-center">
-                        <div class="mb-4 fs-1 floating-animation">🚚✨</div>
-                        <h3 class="fw-bold mb-3 text-dark">Gratis Ongkir</h3>
-                        <h4 class="text-primary fw-bold mb-3">+ Bonus Lampu Hias</h4>
-                        <p class="text-muted mb-4">Minimal belanja Rp500rb</p>
-                        <a href="{{ route('catalog.index') }}" class="btn btn-primary btn-lg rounded-pill px-5 pulse-animation">
-                            Belanja Sekarang
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6" data-aos="fade-left">
-                <div class="card border-0 shadow-lg rounded-5 overflow-hidden h-100 shine-hover" style="background: linear-gradient(135deg, #f3e8ff, #f8f0ff);">
-                    <div class="card-body p-5 text-center">
-                        <div class="mb-4 fs-1 floating-animation">🌟</div>
-                        <h3 class="fw-bold mb-3 text-dark">Koleksi Baru</h3>
-                        <h4 class="text-purple fw-bold mb-3">Diskon 30%</h4>
-                        <p class="text-muted mb-4">Lampu modern & luxury ready stock</p>
-                        <a href="{{ route('catalog.index', ['sort' => 'newest']) }}" class="btn btn-outline-primary btn-lg rounded-pill px-5">
-                            Lihat Koleksi Baru
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
+        <div class="section-header d-flex justify-content-between align-items-center mb-5" data-aos="fade-up">
             <div>
-                <h2 class="fw-bold display-6 mb-0">Produk Unggulan</h2>
-                <p class="text-muted mb-0">Pilihan terbaik untuk kamu</p>
+                <h2 class="fw-extrabold h1 mb-0">Koleksi Terbaru</h2>
+                <div class="h-pill bg-primary mt-2"></div>
             </div>
-            <a href="{{ route('catalog.index') }}" class="btn btn-outline-primary rounded-pill px-4 hover-arrow transition-all">
-                Lihat Semua <span class="arrow-move">→</span>
+            <a href="{{ route('catalog.index') }}" class="btn btn-link text-primary text-decoration-none fw-bold">
+                Lihat Semua <i class="bi bi-arrow-right ms-2"></i>
             </a>
         </div>
 
         <div class="row g-4">
-            @foreach($featuredProducts as $index => $product)
-                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-                    <div class="product-wrapper transition-all">
+            @foreach($latestProducts as $index => $product)
+                <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ 100 * ($index % 4) }}">
+                    <div class="product-modern-card h-100">
                         @include('partials.product-card', ['product' => $product])
                     </div>
                 </div>
@@ -146,64 +117,196 @@
         </div>
     </div>
 </section>
-@endsection
 
-@section('styles')
-<style>
-    /* Global Styling */
-    .transition-all { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .shadow-text { text-shadow: 2px 2px 8px rgba(0,0,0,0.4); }
-    .text-purple { color: #6b46c1; }
+{{--
+    =========================================
+    PROMO SECTION
+    =========================================
+--}}
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-10 col-xl-8" data-aos="fade-right">
+                <div class="promo-card-v2 p-4 p-md-5 rounded-5 shadow-lg overflow-hidden h-100 position-relative"
+                     style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
 
-    /* Search Bar Glassmorphism */
-    .glass-search { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
-    .search-input:focus { transform: scale(1.02); }
+                    <div class="content position-relative z-1">
+                        <span class="text-warning fw-bold tracking-widest d-block mb-3">TRUSTED SERVICE</span>
+                        <h2 class="display-5 fw-bold text-white mb-4 ls-tight">
+                            Garansi Kepuasan <br>
+                            <span class="text-primary">Tanpa Syarat</span>
+                        </h2>
 
-    /* Category Animation */
-    .category-divider { width: 80px; height: 4px; border-radius: 50px; background: linear-gradient(90deg, #0d6efd, #6610f2); }
-    .bg-light-soft { background-color: #f8f9ff; }
-    .hover-lift:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important; }
-    .hover-lift:hover .img-hover { transform: scale(1.1) rotate(5deg); }
+                        <div class="row g-3 mb-5">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center text-white">
+                                    <div class="icon-sm bg-primary rounded-circle me-3">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <span class="fw-medium">100% Produk Original</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center text-white">
+                                    <div class="icon-sm bg-primary rounded-circle me-3">
+                                        <i class="bi bi-truck"></i>
+                                    </div>
+                                    <span class="fw-medium">Packing Kayu Aman</span>
+                                </div>
+                            </div>
+                        </div>
 
-    /* Floating & Pulse Animations */
-    @keyframes floating {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-        100% { transform: translateY(0px); }
-    }
-    .floating-animation { animation: floating 3s ease-in-out infinite; display: inline-block; }
+                        <a href="{{ route('catalog.index') }}" class="btn btn-primary btn-lg rounded-pill px-5 hover-lift shadow">
+                            Jelajahi Katalog
+                        </a>
+                    </div>
 
-    @keyframes pulse-blue {
-        0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
-        70% { box-shadow: 0 0 0 15px rgba(13, 110, 253, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
-    }
-    .pulse-animation { animation: pulse-blue 2s infinite; }
+                    {{-- Background Icon Decoration --}}
+                    <div class="floating-icon bi bi-lightbulb position-absolute opacity-10" style="right: -20px; bottom: -20px; font-size: 10rem; color: #fff; transform: rotate(15deg);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    /* Arrow Move Animation */
-    .hover-arrow:hover .arrow-move { transform: translateX(8px); display: inline-block; transition: 0.3s; }
-
-    /* Hover Scale */
-    .hover-scale:hover { transform: scale(1.05); }
-
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-        .display-5 { font-size: 1.75rem; }
-        .hero-banner-v2 { height: 350px !important; }
-    }
-</style>
-@endsection
-
-@section('scripts')
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Inisialisasi AOS
         AOS.init({
-            duration: 800,
+            duration: 1000,
             once: true,
-            easing: 'ease-in-out'
+            offset: 100,
+            easing: 'ease-out-cubic'
         });
     });
 </script>
+@endsection
+
+{{--
+    =========================================
+    CSS STYLES
+    =========================================
+--}}
+@section('styles')
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    :root {
+        --primary-font: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+        font-family: var(--primary-font);
+        overflow-x: hidden;
+    }
+
+    /* Typography Utilities */
+    .fw-extrabold { font-weight: 800; }
+    .ls-tight { letter-spacing: -1.5px; }
+    .tracking-widest { letter-spacing: 2px; }
+    .shadow-text { text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+    /* Hero Styling */
+    .hero-banner-v2 {
+        min-height: 550px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Search Bar Putih */
+    .glass-search {
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        backdrop-filter: none !important;
+    }
+
+    .glass-search input.form-control {
+        color: #333333 !important;
+    }
+
+    .glass-search input.form-control::placeholder {
+        color: #999999 !important;
+    }
+
+    .no-focus:focus {
+        box-shadow: none;
+        outline: none;
+    }
+
+    /* Modern Category Card */
+    .category-card-modern {
+        background: transparent;
+        transition: all 0.4s ease;
+        border-radius: 25px;
+    }
+
+    .category-img-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 100%;
+        overflow: hidden;
+    }
+
+    .category-img-wrapper img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .bg-shape {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0; left: 0;
+        background: #f8f9ff;
+        border-radius: 40px;
+        transition: all 0.4s ease;
+    }
+
+    .category-card-modern:hover .bg-shape {
+        background: #eef2ff;
+        transform: scale(0.95);
+    }
+
+    .category-card-modern:hover img {
+        transform: translate(-50%, -60%) scale(1.1);
+    }
+
+    /* Product Card Wrap */
+    .product-modern-card {
+        transition: all 0.4s ease;
+    }
+
+    .product-modern-card:hover {
+        transform: translateY(-10px);
+    }
+
+    /* Promo Utilities */
+    .icon-sm {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .h-pill { width: 60px; height: 6px; border-radius: 50px; }
+
+    /* Interactive Effects */
+    .hover-lift { transition: transform 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-5px); }
+
+    .hover-scale { transition: transform 0.3s ease; }
+    .hover-scale:hover { transform: scale(1.05); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-banner-v2 { min-height: 400px; padding: 40px 0; }
+        .display-4 { font-size: 2.2rem; }
+        .ls-tight { letter-spacing: -0.5px; }
+    }
+</style>
 @endsection
