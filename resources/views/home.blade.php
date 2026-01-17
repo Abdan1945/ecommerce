@@ -5,7 +5,7 @@
 @section('content')
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
-{{--
+{{-- 
     =========================================
     HERO SECTION
     =========================================
@@ -13,10 +13,10 @@
 <section class="py-4 py-lg-5">
     <div class="container">
         <div class="hero-banner-v2 rounded-5 shadow-lg d-flex align-items-center justify-content-center position-relative overflow-hidden"
-             data-aos="zoom-in"
+             data-aos="zoom-in" 
              data-aos-duration="1200"
              style="background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), url('{{ asset('images/lampu3.jpg') }}');">
-
+            
             <div class="hero-content text-center p-4 w-100 z-1">
                 <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-3 fw-bold animate__animated animate__fadeInDown">
                     <i class="bi bi-stars me-1"></i> KOLEKSI TERBARU 2026
@@ -39,7 +39,7 @@
                                 <i class="bi bi-search text-muted"></i>
                             </span>
                             <input type="text" name="search" class="form-control bg-transparent border-0 text-dark ps-2 py-3 no-focus"
-                                   placeholder="Cari lampu gantung, LED, atau lampu hias..."
+                                   placeholder="Cari lampu gantung, LED, atau lampu hias..." 
                                    value="{{ request('search') }}">
                             <button type="submit" class="btn btn-warning rounded-pill px-4 px-md-5 py-2 fw-bold shadow-sm transition-all hover-scale">
                                 Cari Sekarang
@@ -52,11 +52,7 @@
     </div>
 </section>
 
-{{--
-    =========================================
-    CATEGORY SECTION
-    =========================================
---}}
+{{-- KATEGORI --}}
 <section class="py-5 bg-white">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
@@ -89,11 +85,7 @@
     </div>
 </section>
 
-{{--
-    =========================================
-    LATEST PRODUCTS SECTION
-    =========================================
---}}
+{{-- LATEST PRODUCTS --}}
 <section class="py-5 bg-light position-relative">
     <div class="container">
         <div class="section-header d-flex justify-content-between align-items-center mb-5" data-aos="fade-up">
@@ -118,18 +110,14 @@
     </div>
 </section>
 
-{{--
-    =========================================
-    PROMO SECTION
-    =========================================
---}}
+{{-- PROMO/GARANSI --}}
 <section class="py-5">
     <div class="container">
         <div class="row g-4 justify-content-center">
             <div class="col-lg-10 col-xl-8" data-aos="fade-right">
-                <div class="promo-card-v2 p-4 p-md-5 rounded-5 shadow-lg overflow-hidden h-100 position-relative"
+                <div class="promo-card-v2 p-4 p-md-5 rounded-5 shadow-lg overflow-hidden h-100 position-relative" 
                      style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
-
+                    
                     <div class="content position-relative z-1">
                         <span class="text-warning fw-bold tracking-widest d-block mb-3">TRUSTED SERVICE</span>
                         <h2 class="display-5 fw-bold text-white mb-4 ls-tight">
@@ -161,7 +149,6 @@
                         </a>
                     </div>
 
-                    {{-- Background Icon Decoration --}}
                     <div class="floating-icon bi bi-lightbulb position-absolute opacity-10" style="right: -20px; bottom: -20px; font-size: 10rem; color: #fff; transform: rotate(15deg);"></div>
                 </div>
             </div>
@@ -182,11 +169,6 @@
 </script>
 @endsection
 
-{{--
-    =========================================
-    CSS STYLES
-    =========================================
---}}
 @section('styles')
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -200,32 +182,20 @@
         overflow-x: hidden;
     }
 
-    /* Typography Utilities */
     .fw-extrabold { font-weight: 800; }
     .ls-tight { letter-spacing: -1.5px; }
     .tracking-widest { letter-spacing: 2px; }
     .shadow-text { text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
 
-    /* Hero Styling */
     .hero-banner-v2 {
         min-height: 550px;
         background-size: cover;
         background-position: center;
     }
 
-    /* Search Bar Putih */
     .glass-search {
         background: #ffffff !important;
         border: 1px solid rgba(0, 0, 0, 0.05) !important;
-        backdrop-filter: none !important;
-    }
-
-    .glass-search input.form-control {
-        color: #333333 !important;
-    }
-
-    .glass-search input.form-control::placeholder {
-        color: #999999 !important;
     }
 
     .no-focus:focus {
@@ -233,80 +203,33 @@
         outline: none;
     }
 
-    /* Modern Category Card */
-    .category-card-modern {
-        background: transparent;
-        transition: all 0.4s ease;
-        border-radius: 25px;
+    .product-modern-card { 
+        transition: all 0.4s ease; 
+    }
+    
+    .product-modern-card:hover { 
+        transform: translateY(-10px); 
     }
 
-    .category-img-wrapper {
-        position: relative;
-        width: 100%;
-        padding-top: 100%;
-        overflow: hidden;
-    }
-
-    .category-img-wrapper img {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .bg-shape {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0; left: 0;
-        background: #f8f9ff;
-        border-radius: 40px;
-        transition: all 0.4s ease;
-    }
-
-    .category-card-modern:hover .bg-shape {
-        background: #eef2ff;
-        transform: scale(0.95);
-    }
-
-    .category-card-modern:hover img {
-        transform: translate(-50%, -60%) scale(1.1);
-    }
-
-    /* Product Card Wrap */
-    .product-modern-card {
-        transition: all 0.4s ease;
-    }
-
-    .product-modern-card:hover {
-        transform: translateY(-10px);
-    }
-
-    /* Promo Utilities */
     .icon-sm {
-        width: 40px;
+        width: 40px; 
         height: 40px;
-        display: flex;
-        align-items: center;
+        display: flex; 
+        align-items: center; 
         justify-content: center;
     }
 
     .h-pill { width: 60px; height: 6px; border-radius: 50px; }
-
-    /* Interactive Effects */
+    
     .hover-lift { transition: transform 0.3s ease; }
     .hover-lift:hover { transform: translateY(-5px); }
-
+    
     .hover-scale { transition: transform 0.3s ease; }
     .hover-scale:hover { transform: scale(1.05); }
 
-    /* Responsive */
     @media (max-width: 768px) {
         .hero-banner-v2 { min-height: 400px; padding: 40px 0; }
         .display-4 { font-size: 2.2rem; }
-        .ls-tight { letter-spacing: -0.5px; }
     }
 </style>
 @endsection

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,67 +10,78 @@ class CartItem extends Model
         'cart_id',
         'product_id',
         'quantity',
-
     ];
+
     protected $casts = [
         'quantity' => 'integer',
     ];
+
     // ==================== RELATIONSHIPS ====================
     public function cart()
     {
         return $this->belongsTo(Cart::class);
     }
+
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
     // ==================== ACCESSORS ====================
+
+    /**
+     * Menghitung subtotal item menggunakan display_price dari Model Product.
+     * Ini akan otomatis mengambil Rp 250.000 jika ada diskon, 
+     * atau Rp 750.000 jika tidak ada diskon.
+     */
+    public function getSubtotalAttribute()
+    {
+        // Menggunakan logic display_price yang sudah kita buat di Model Product
+        return $this->product->display_price * $this->quantity;
+    }
+
+    /**
+     * Alias untuk subtotal jika controller Anda memanggil total_price
+     */
     public function getTotalPriceAttribute()
     {
-        return $this->product->discount_price * $this->quantity;
+        return $this->subtotal;
     }
+
     public function getTotalWeightAttribute()
     {
         return $this->product->weight * $this->quantity;
     }
+
     // ==================== BOOT ====================
     protected static function boot()
     {
         parent::boot();
+
         static::creating(function ($cartItem) {
-            // Pastikan relasi product ter-load
-            if (! $cartItem->relationLoaded('product')) {
-                $cartItem->load('product');
-            }
-            if (! $cartItem->product) {
-                throw new \Exception('Produk tidak ditemukan.');
-            }
-            // Cek stok produk sebelum menambahkan ke item keranjang
-            if ($cartItem->quantity > $cartItem->product->stock) {
-                throw new \Exception('Stok produk tidak mencukupi.');
-            }
+            $cartItem->validateStock();
         });
+
         static::updating(function ($cartItem) {
-            if (! $cartItem->relationLoaded('product')) {
-                $cartItem->load('product');
-            }
-            if (! $cartItem->product) {
-                throw new \Exception('Produk tidak ditemukan.');
-            }
-            // Cek stok produk sebelum memperbarui item keranjang
-            if ($cartItem->quantity > $cartItem->product->stock) {
-                throw new \Exception('Stok produk tidak mencukupi.');
-            }
+            $cartItem->validateStock();
         });
     }
 
     /**
-     * Agar $item->subtotal di view tidak 0, fallback ke total_price
+     * Helper untuk validasi stok agar kode lebih rapi
      */
-    public function getSubtotalAttribute()
+    protected function validateStock()
     {
-        return $this->total_price;
-    }
+        if (!$this->relationLoaded('product')) {
+            $this->load('product');
+        }
 
+        if (!$this->product) {
+            throw new \Exception('Produk tidak ditemukan.');
+        }
+
+        if ($this->quantity > $this->product->stock) {
+            throw new \Exception('Stok produk tidak mencukupi.');
+        }
+    }
 }
